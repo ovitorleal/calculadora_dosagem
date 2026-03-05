@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Doses Antirrábicas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <!-- Cabeçalho -->
+        <div class="bg-blue-700 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold tracking-tight">Cálculo Antirrábico</h1>
+            <p class="text-blue-100 text-sm mt-1 opacity-90">Soro e Imunoglobulina</p>
+        </div>
+
+        <!-- Formulário -->
+        <div class="p-6 space-y-6">
+            <!-- Seleção do Imunobiológico -->
+            <div class="space-y-2">
+                <label for="tipo" class="block text-sm font-bold text-gray-700">
+                    Imunobiológico
+                </label>
+                <select id="tipo" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    <option value="soro">Soro Antirrábico (SAR)</option>
+                    <option value="imuno">Imunoglobulina Antirrábica (IGHAR)</option>
+                </select>
+                <div class="flex items-center space-x-2 text-blue-600">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                    <p id="info-dose" class="text-xs font-medium">Dose padrão: 40 UI/kg</p>
+                </div>
+            </div>
+
+            <!-- Peso do Paciente -->
+            <div class="space-y-2">
+                <label for="peso" class="block text-sm font-bold text-gray-700">
+                    Peso do Paciente (kg)
+                </label>
+                <div class="relative">
+                    <input type="number" id="peso" placeholder="0.0" step="0.1" min="0"
+                        class="w-full p-4 bg-gray-50 border border-gray-300 rounded-xl text-lg font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">kg</span>
+                </div>
+            </div>
+
+            <hr class="border-gray-100">
+
+            <!-- Bloco de Resultados -->
+            <div id="resultados" class="space-y-4 hidden">
+                <!-- Dose Total UI -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Dose Total Necessária</span>
+                    <div class="flex items-baseline space-x-1">
+                        <span id="res-ui" class="text-3xl font-black text-slate-800">0</span>
+                        <span class="text-slate-500 font-bold">UI</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Volume em ML -->
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                        <span class="block text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">Volume</span>
+                        <div class="flex items-baseline space-x-1">
+                            <span id="res-ml" class="text-2xl font-bold text-emerald-900">0</span>
+                            <span class="text-emerald-700 font-bold text-sm">ml</span>
+                        </div>
+                    </div>
+
+                    <!-- Quantidade de Frascos -->
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <span class="block text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">Frascos</span>
+                        <div class="flex items-baseline space-x-1">
+                            <span id="res-frascos" class="text-2xl font-bold text-amber-900">0</span>
+                            <span class="text-amber-700 font-bold text-sm">un</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observação Técnica -->
+                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <ul class="text-[10px] text-gray-500 space-y-1 list-disc ml-4 leading-tight">
+                        <li>Concentração utilizada: <strong>200 UI/ml</strong>.</li>
+                        <li>Apresentação: Frasco de 5ml (<strong>1000 UI</strong>).</li>
+                        <li>Cálculo de frascos arredondado para cima (dose mínima garantida).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Estado Vazio -->
+            <div id="placeholder" class="text-center py-10 text-gray-400">
+                <svg class="w-12 h-12 mx-auto mb-3 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <p class="text-sm">Aguardando inserção do peso...</p>
+            </div>
+        </div>
+        
+        <!-- Rodapé -->
+        <div class="bg-gray-50 p-4 text-center border-t border-gray-100">
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Ferramenta de Apoio Profissional</p>
+        </div>
+    </div>
+
+    <script>
+        const inputTipo = document.getElementById('tipo');
+        const inputPeso = document.getElementById('peso');
+        const infoDose = document.getElementById('info-dose');
+        
+        const resUI = document.getElementById('res-ui');
+        const resML = document.getElementById('res-ml');
+        const resFrascos = document.getElementById('res-frascos');
+        const containerResultados = document.getElementById('resultados');
+        const placeholder = document.getElementById('placeholder');
+
+        function calcular() {
+            const tipo = inputTipo.value;
+            const peso = parseFloat(inputPeso.value);
+            
+            // Define a dose base por kg
+            const doseBase = tipo === 'soro' ? 40 : 20;
+            infoDose.innerText = `Dose padrão: ${doseBase} UI/kg`;
+
+            // Verifica se o peso é válido
+            if (isNaN(peso) || peso <= 0) {
+                containerResultados.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                return;
+            }
+
+            // Exibe os resultados e oculta o placeholder
+            containerResultados.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+
+            // Cálculos baseados nos parâmetros fornecidos:
+            // Concentração: 200 UI/ml
+            // Frasco: 5ml = 1000 UI
+            
+            const totalUI = peso * doseBase;
+            const totalML = totalUI / 200;
+            const totalFrascos = Math.ceil(totalUI / 1000);
+
+            // Atualização do DOM com formatação brasileira
+            resUI.innerText = totalUI.toLocaleString('pt-BR');
+            resML.innerText = totalML.toLocaleString('pt-BR', { 
+                minimumFractionDigits: 1, 
+                maximumFractionDigits: 1 
+            });
+            resFrascos.innerText = totalFrascos;
+        }
+
+        // Listeners para atualização instantânea
+        inputTipo.addEventListener('change', calcular);
+        inputPeso.addEventListener('input', calcular);
+    </script>
+</body>
+</html>
