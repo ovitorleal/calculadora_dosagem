@@ -14,7 +14,7 @@
             
             // Define a dose base por kg
             const doseBase = tipo === 'soro' ? 40 : 20;
-            infoDose.innerText = `Dose padrão: ${doseBase} UI/kg`;
+            infoDose.innerText = `Dose padrão: ${doseBase} UI/kg.`;
 
             // Verifica se o peso é válido
             if (isNaN(peso) || peso <= 0) {
